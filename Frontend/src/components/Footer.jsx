@@ -31,6 +31,8 @@ const Footer = () => {
           <ul className="flex flex-col gap-2 text-gray-600 dark:text-white">
             <li>977-9815027619</li>
             <li>Prabintiwari964@gmail.com</li>
+            <li>977-9861903908</li>
+            <li>anmaryal41@gmail.com</li>
           </ul>
         </div>
       </div>

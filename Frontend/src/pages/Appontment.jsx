@@ -81,7 +81,7 @@ const Appontment = () => {
           {/* Doctors image */}
           <div>
             <img
-              src={docInfo.img}
+              src={docInfo.image}
               className="bg-indigo-200 w-full sm:max-w-72 rounded-lg"
               alt=""
             />

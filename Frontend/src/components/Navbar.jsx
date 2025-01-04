@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets_frontend } from "../assets_frontend/assets";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faChevronDown,  faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faChevronDown,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import { AppContext } from "../context/AppContext";
 
 function Navbar() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const [showNav, setShowNav] = useState(false);
+  const navigate = useNavigate();
+  const { token, setToken } = useContext(AppContext);
 
   useEffect(() => {
     if (theme === "dark") {
@@ -30,9 +37,12 @@ function Navbar() {
     };
   }, []);
 
-  const navigate = useNavigate();
-
-  const [token, setToken] = useState(true);
+ 
+  const logout = () => {
+    setToken(false);
+    localStorage.removeItem("token");
+    scrollTo(0, 0);
+  };
 
   const navitems = (
     <>
@@ -80,41 +90,86 @@ function Navbar() {
           {/* navbar for mbl */}
 
           <div className="navbar-start ">
-            <FontAwesomeIcon className="w-6 h-6 cursor-pointer px-3 lg:hidden "
+            <FontAwesomeIcon
+              className="w-6 h-6 cursor-pointer px-3 lg:hidden "
               icon={showNav ? faXmark : faBars}
               onClick={() => setShowNav(!showNav)}
             />
 
-            <div className={`absolute bg-stone-100 dark:bg-slate-900 border border-indigo-500 rounded-2xl z-20 left-0 w-screen pl-6 shadow-2xl transition-all  ease-in ${showNav ? "top-16" : "top-[-300px]"}`}>
+            <div
+              className={`absolute bg-stone-100 dark:bg-slate-900 border border-indigo-500 rounded-2xl z-20 left-0 w-screen pl-6 shadow-2xl transition-all  ease-in ${
+                showNav ? "top-16" : "top-[-300px]"
+              }`}
+            >
               <ul className="flex flex-col gap-4 py-4">
-                <NavLink to={'/'} onClick={()=>{setShowNav(!showNav); scrollTo(0, 0)}} className={({ isActive }) =>
-              `px-4 py-2 rounded ${
-                isActive
-                  ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
-                  : `hover:bg-gray-200 dark:hover:bg-gray-800 
+                <NavLink
+                  to={"/"}
+                  onClick={() => {
+                    setShowNav(!showNav);
+                    scrollTo(0, 0);
+                  }}
+                  className={({ isActive }) =>
+                    `px-4 py-2 rounded ${
+                      isActive
+                        ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
+                        : `hover:bg-gray-200 dark:hover:bg-gray-800 
                     }`
-              } `}>HOME</NavLink>
-                <NavLink to={'/doctors'} onClick={()=>{setShowNav(!showNav); scrollTo(0, 0)}} className={({ isActive }) =>
-              `px-4 py-2 rounded ${
-                isActive
-                  ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
-                  : `hover:bg-gray-200 dark:hover:bg-gray-800
+                    } `
+                  }
+                >
+                  HOME
+                </NavLink>
+                <NavLink
+                  to={"/doctors"}
+                  onClick={() => {
+                    setShowNav(!showNav);
+                    scrollTo(0, 0);
+                  }}
+                  className={({ isActive }) =>
+                    `px-4 py-2 rounded ${
+                      isActive
+                        ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
+                        : `hover:bg-gray-200 dark:hover:bg-gray-800
                     }`
-              } `}>ALL DOCTORS</NavLink>
-                <NavLink to={'/about'} onClick={()=>{setShowNav(!showNav); scrollTo(0, 0)}} className={({ isActive }) =>
-              `px-4 py-2 rounded ${
-                isActive
-                  ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
-                  : `hover:bg-gray-200 dark:hover:bg-gray-800
+                    } `
+                  }
+                >
+                  ALL DOCTORS
+                </NavLink>
+                <NavLink
+                  to={"/about"}
+                  onClick={() => {
+                    setShowNav(!showNav);
+                    scrollTo(0, 0);
+                  }}
+                  className={({ isActive }) =>
+                    `px-4 py-2 rounded ${
+                      isActive
+                        ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
+                        : `hover:bg-gray-200 dark:hover:bg-gray-800
                     }`
-              } `}>ABOUT</NavLink>
-                <NavLink to={'/contact'} onClick={()=>{setShowNav(!showNav); scrollTo(0, 0)}} className={({ isActive }) =>
-              `px-4 py-2 rounded ${
-                isActive
-                  ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
-                  : `hover:bg-gray-200 dark:hover:bg-gray-800
+                    } `
+                  }
+                >
+                  ABOUT
+                </NavLink>
+                <NavLink
+                  to={"/contact"}
+                  onClick={() => {
+                    setShowNav(!showNav);
+                    scrollTo(0, 0);
+                  }}
+                  className={({ isActive }) =>
+                    `px-4 py-2 rounded ${
+                      isActive
+                        ? "bg-gray-800 text-white dark:bg-white dark:text-gray-900"
+                        : `hover:bg-gray-200 dark:hover:bg-gray-800
                     }`
-              } `}>CONTACT</NavLink>
+                    } `
+                  }
+                >
+                  CONTACT
+                </NavLink>
               </ul>
             </div>
 
@@ -172,7 +227,9 @@ function Navbar() {
                     /* Profile Pic*/
                   },
                   (
-                    <div className={` flex items-center cursor-pointer group relative`}>
+                    <div
+                      className={` flex items-center cursor-pointer group relative`}
+                    >
                       <div className="flex items-center gap-2">
                         <div className="avatar">
                           <div className="w-14 md:w-16 rounded-full">
@@ -182,7 +239,9 @@ function Navbar() {
                         <FontAwesomeIcon icon={faChevronDown} />
                       </div>
 
-                      <div className={`absolute top-0 right-0 md:-right-5 mt-16 text-sm sm:text-base md:font-medium hidden text-gray-600  z-10  group-hover:block`}>
+                      <div
+                        className={`absolute top-0 right-0 md:-right-5 mt-16 text-sm sm:text-base md:font-medium hidden text-gray-600  z-10  group-hover:block`}
+                      >
                         <div className="min-w-48 bg-stone-100 rounded  flex flex-col gap-2 p-4 items-center">
                           <p
                             onClick={() => {
@@ -196,18 +255,14 @@ function Navbar() {
                           <p
                             onClick={() => {
                               navigate("/my-appointments");
-                              scrollTo(0, 0)
+                              scrollTo(0, 0);
                             }}
                             className="hover:text-black cursor-pointer"
                           >
                             My Appointments
                           </p>
                           <p
-                            onClick={() => {
-                              setToken(false);
-                              navigate("/login");
-                              scrollTo(0, 0)
-                            }}
+                            onClick={logout}
                             className="hover:text-black cursor-pointer"
                           >
                             Logout
@@ -228,7 +283,7 @@ function Navbar() {
                         Create account
                       </button>
                       {/* for mbl */}
-                      
+
                       <button
                         className="md:hidden btn btn-sm btn-outline dark:bg-indigo-600  dark:text-white dark:border-none"
                         onClick={() => navigate("/login")}

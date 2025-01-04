@@ -10,11 +10,14 @@ import MyAppointments from "./pages/MyAppointments";
 import Appointment from "./pages/Appontment";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const location = useLocation();
   return (
     <div className="min-h-screen px-4 sm:px-[5%] dark:bg-slate-900 dark:text-gray-300">
+      <ToastContainer />
       <Navbar />
 
       <div className="pt-28">
