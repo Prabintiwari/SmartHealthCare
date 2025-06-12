@@ -9,11 +9,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { AppContext } from "../context/AppContext";
 
-function Navbar() {
+function Navbar({showLogin,setShowLogin}) {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const [showNav, setShowNav] = useState(false);
   const navigate = useNavigate();
-  const { token, setToken } = useContext(AppContext);
+  const { token, setToken, userData } = useContext(AppContext);
 
   useEffect(() => {
     if (theme === "dark") {
@@ -222,7 +222,7 @@ function Navbar() {
             {/* login and profile */}
 
             <div className="">
-              {token
+              {token && userData
                 ? ({
                     /* Profile Pic*/
                   },
@@ -233,7 +233,7 @@ function Navbar() {
                       <div className="flex items-center gap-2">
                         <div className="avatar">
                           <div className="w-14 md:w-16 rounded-full">
-                            <img src={assets_frontend.ProfilePic} />
+                            <img src={userData.image} />
                           </div>
                         </div>
                         <FontAwesomeIcon icon={faChevronDown} />
@@ -278,7 +278,7 @@ function Navbar() {
                     <div>
                       <button
                         className="hidden md:block btn btn-outline  dark:bg-white dark:hover:bg-indigo-600 dark:border-none "
-                        onClick={() => navigate("/login")}
+                        onClick={() =>setShowLogin(!showLogin)}
                       >
                         Create account
                       </button>
@@ -286,7 +286,7 @@ function Navbar() {
 
                       <button
                         className="md:hidden btn btn-sm btn-outline dark:bg-indigo-600  dark:text-white dark:border-none"
-                        onClick={() => navigate("/login")}
+                        onClick={() =>setShowLogin(!showLogin)}
                       >
                         Create account
                       </button>

@@ -1,27 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { assets_frontend } from "../assets_frontend/assets";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import RelatedDocs from "../components/RelatedDocs";
+import { toast } from "react-toastify";
+import axios from "axios";
 
-const Appontment = () => {
+const Appontment = ( {showLogin, setShowLogin}) => {
   const { docId } = useParams();
-  const { doctors } = useContext(AppContext);
+  const { doctors, backendUrl, getDoctorsData, token } = useContext(AppContext);
   const [docInfo, setDocInfo] = useState(null);
   const [docSlots, setDocSlots] = useState([]);
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState("");
   const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const navigate = useNavigate();
 
   const fetchDocInfo = async () => {
     const info = doctors.find((doc) => doc._id === docId);
     setDocInfo(info);
   };
-  useEffect(() => {
-    fetchDocInfo();
-  }, [doctors, docId]);
 
   const getAvailableSlots = async () => {
     setDocSlots([]);
@@ -57,11 +57,26 @@ const Appontment = () => {
           minute: "2-digit",
         });
 
-        // add slots to the array
-        timeSlots.push({
-          date: new Date(currentDate),
-          time: formattedTime,
-        });
+        let day = currentDate.getDate();
+        let month = currentDate.getMonth() + 1;
+        let year = currentDate.getFullYear();
+
+        const slotDate = day + "_" + month + "_" + year;
+        const slotTime = formattedTime;
+
+        const isSlotAvailable =
+          docInfo.slots_booked[slotDate] &&
+          docInfo.slots_booked[slotDate].includes(slotTime)
+            ? false
+            : true;
+
+        if (isSlotAvailable) {
+          // add slots to the array
+          timeSlots.push({
+            date: new Date(currentDate),
+            time: formattedTime,
+          });
+        }
 
         // Incrementing time by 30 minutes
         currentDate.setMinutes(currentDate.getMinutes() + 30);
@@ -69,6 +84,44 @@ const Appontment = () => {
       setDocSlots((prev) => [...prev, timeSlots]);
     }
   };
+
+  const bookAppontment = async () => {
+    if (!token) {
+      toast.warn("Please login to book an appontment");
+      return setShowLogin(!showLogin);
+    }
+
+    try {
+      const date = docSlots[slotIndex][0].date;
+
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+
+      let slotDate = day + "_" + month + "_" + year;
+
+      const { data } = await axios.post(
+        backendUrl + "/api/user/book-appointment",
+        { docId, slotDate, slotTime },
+        { headers: { token } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getDoctorsData();
+        navigate("/my-appointments");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocInfo();
+  }, [doctors, docId]);
 
   useEffect(() => {
     getAvailableSlots();
@@ -137,7 +190,7 @@ const Appontment = () => {
                 </div>
               ))}
           </div>
-          
+
           {/* Time slots */}
 
           <div className="w-full flex items-center gap-3 mt-4 overflow-x-scroll no-scrollbar">
@@ -158,7 +211,10 @@ const Appontment = () => {
                 </p>
               ))}
           </div>
-          <button className=" text-white text-sm font-light px-14 py-3 rounded-full my-6 bg-indigo-600 active:scale-[0.97] active:duration-300 active:ease-out ">
+          <button
+            onClick={bookAppontment}
+            className=" text-white text-sm font-light px-14 py-3 rounded-full my-6 bg-indigo-600 active:scale-[0.97] active:duration-300 active:ease-out "
+          >
             Book an Appontment
           </button>
         </div>

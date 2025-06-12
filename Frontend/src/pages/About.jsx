@@ -51,7 +51,7 @@ const About = () => {
         <p className=" text-xl my-4 uppercase items-center text-center">
           Why{" "}
           <span className="text-gray-700 dark:text-gray-300 font-medium">
-            choose Us
+            choose Us?
           </span>
         </p>
         <div className="flex flex-col md:flex-row items-center  gap-8 md:gap-12 py-4">

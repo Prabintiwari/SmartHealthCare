@@ -10,12 +10,12 @@ const Doctorslist = () => {
     }
   }, [aToken])
   return (
-    <div className='m-5 max-h-[90vh] flex flex-col items-center overflow-y-scroll no-scrollbar'>
+    <div className='m-5 max-h-[85vh] flex flex-col items-center overflow-y-scroll no-scrollbar'>
       <h1 className='text-lg font-medium'>All Doctors</h1>
       <div className='w-full flex flex-wrap justify-center gap-4 pt-5 gap-y-6'>
         {
           doctors.map((item,index) => (
-            <div key={index} className='border border-indigo-200 rounded-xl max-w-72 sm:max-w-56 overflow-hidden cursor-pointer group'>
+            <div key={index} className='border border-indigo-700 rounded-xl max-w-72 sm:max-w-56 overflow-hidden cursor-pointer group'>
               <img src={item.image} className='bg-indigo-50 group-hover:bg-indigo-600 transition-all duration-500' alt="" />
               <div className='p-4'>
                 <p className='text-neutral-800 text-lg font-medium dark:text-gray-300'>{item.name}</p>

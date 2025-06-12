@@ -39,7 +39,7 @@ const TopDoctors = () => {
             >
               <img
                 className="w-full h-96 object-cover bg-blue-50"
-                src={item.img}
+                src={item.image}
                 alt={item.name || "Doctor"}
               />
               <div className="p-4">
