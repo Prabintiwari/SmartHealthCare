@@ -229,17 +229,62 @@ const cancelAppointment = async (req, res) => {
 }
 
 
-//Api to payment gateway using razorpay for booking appointment
-const paymentRazorpay = async (req, res) => {
-   try {
-
+// API for eSewa payment
+const paymentEsewa = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
     
-   } catch (error) {
-     console.log(error);
-     res.json({ success: false, message: error.message });
+    const appointmentData = await appointmentModel.findById(appointmentId);
     
-   }
-}
+    if (!appointmentData || appointmentData.cancelled) {
+      return res.json({ success: false, message: "Appointment not found or cancelled" });
+    }
+    
+    // eSewa payment parameters
+    const esewaPaymentData = {
+      amount: appointmentData.amount,
+      tax_amount: 0,
+      total_amount: appointmentData.amount,
+      transaction_uuid: appointmentId,
+      product_code: "EPAYTEST", // Use your eSewa merchant code
+      product_service_charge: 0,
+      product_delivery_charge: 0,
+      success_url: `${process.env.FRONTEND_URL}/verify-payment`,
+      failure_url: `${process.env.FRONTEND_URL}/my-appointments`,
+      signed_field_names: "total_amount,transaction_uuid,product_code",
+    };
+
+    res.json({ success: true, paymentData: esewaPaymentData });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to verify eSewa payment
+const verifyEsewa = async (req, res) => {
+  try {
+    const { appointmentId, oid, amt, refId } = req.body;
+
+    // Verify payment with eSewa
+    // In production, you would verify with eSewa server
+    
+    const appointmentData = await appointmentModel.findById(appointmentId);
+    
+    if (appointmentData && !appointmentData.payment) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, { 
+        payment: true,
+        status: "Accepted"
+      });
+      res.json({ success: true, message: "Payment successful" });
+    } else {
+      res.json({ success: false, message: "Payment verification failed" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointments, cancelAppointment };
+export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointments, cancelAppointment, paymentEsewa, verifyEsewa };
