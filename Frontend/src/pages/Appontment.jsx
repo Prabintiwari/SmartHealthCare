@@ -87,8 +87,13 @@ const Appontment = ( {showLogin, setShowLogin}) => {
 
   const bookAppontment = async () => {
     if (!token) {
-      toast.warn("Please login to book an appontment");
-      return setShowLogin(!showLogin);
+      toast.warn("Please login to book an appointment");
+      return setShowLogin(true);
+    }
+
+    if (!slotTime) {
+      toast.warn("Please select a time slot");
+      return;
     }
 
     try {
@@ -115,7 +120,7 @@ const Appontment = ( {showLogin, setShowLogin}) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
