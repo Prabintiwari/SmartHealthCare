@@ -49,30 +49,34 @@ const AllAppointment = () => {
               </thead>
               <tbody>
                 {appointments && appointments.length > 0 ? (
-                  appointments.map((item, index) => (
+                  appointments.map((item, index) => {
+                    const patient = item.userId || item.userData;
+                    const doctor = item.docId || item.docData;
+                    
+                    return (
                     <tr key={index} className='border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors'>
                       <td className='py-4 px-3 text-gray-800 dark:text-white font-medium'>{index + 1}</td>
                       <td className='py-4 px-3'>
                         <div className='flex items-center gap-3'>
-                          <img src={item.userData.image} alt="" className='w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600' />
+                          <img src={patient?.image} alt="" className='w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600' />
                           <div>
-                            <p className='font-semibold text-gray-800 dark:text-white'>{item.userData.name}</p>
-                            <p className='text-sm text-gray-500 dark:text-gray-400'>{item.userData.email}</p>
+                            <p className='font-semibold text-gray-800 dark:text-white'>{patient?.name}</p>
+                            <p className='text-sm text-gray-500 dark:text-gray-400'>{patient?.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className='py-4 px-3 text-gray-800 dark:text-white'>
-                        {item.userData.dob ? calculateAge(item.userData.dob) : 'N/A'}
+                        {patient?.dob ? calculateAge(patient.dob) : 'N/A'}
                       </td>
                       <td className='py-4 px-3'>
                         <div className='flex items-center gap-3'>
-                          <img src={item.docData.image} alt="" className='w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600' />
-                          <p className='font-semibold text-gray-800 dark:text-white'>{item.docData.name}</p>
+                          <img src={doctor?.image} alt="" className='w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600' />
+                          <p className='font-semibold text-gray-800 dark:text-white'>{doctor?.name}</p>
                         </div>
                       </td>
                       <td className='py-4 px-3'>
                         <span className='bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-xs font-medium'>
-                          {item.docData.speciality}
+                          {doctor?.speciality}
                         </span>
                       </td>
                       <td className='py-4 px-3'>
@@ -118,7 +122,8 @@ const AllAppointment = () => {
                         )}
                       </td>
                     </tr>
-                  ))
+                    );
+                  })
                 ) : (
                   <tr>
                     <td colSpan="10" className='py-8 text-center text-gray-500 dark:text-gray-400'>

@@ -122,7 +122,9 @@ const allDoctors = async (req, res) => {
 // API to get all appointments for admin
 const appointmentsAdmin = async (req, res) => {
   try {
-    const appointments = await appointmentModel.find({});
+    const appointments = await appointmentModel.find({})
+      .populate('userId', 'name email image dob')
+      .populate('docId', 'name speciality image');
     res.json({ success: true, appointments });
   } catch (error) {
     console.log(error);
@@ -134,12 +136,14 @@ const appointmentsAdmin = async (req, res) => {
 const adminDashboard = async (req, res) => {
   try {
     const doctors = await doctorModel.find({});
-    const appointments = await appointmentModel.find({});
+    const appointments = await appointmentModel.find({})
+      .populate('userId', 'name email image dob')
+      .populate('docId', 'name speciality image');
     
     const dashData = {
       doctors: doctors.length,
       appointments: appointments.length,
-      patients: new Set(appointments.map(app => app.userId)).size,
+      patients: new Set(appointments.map(app => app.userId?._id?.toString()).filter(id => id)).size,
       latestAppointments: appointments.reverse().slice(0, 5)
     };
 
