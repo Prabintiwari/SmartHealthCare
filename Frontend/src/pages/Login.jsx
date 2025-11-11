@@ -28,6 +28,9 @@ const Login = ({ showLogin, setShowLogin }) => {
         if (data.success) {
           setToken(data.token);
           localStorage.setItem("token", data.token);
+          toast.success("Account created successfully!");
+          setShowLogin(false);
+          navigate("/");
         } else {
           toast.error(data.message);
         }
@@ -39,20 +42,18 @@ const Login = ({ showLogin, setShowLogin }) => {
         if (data.success) {
           setToken(data.token);
           localStorage.setItem("token", data.token);
+          toast.success("Login successful!");
+          setShowLogin(false);
+          navigate("/");
         } else {
           toast.error(data.message);
         }
       }
     } catch (error) {
+      console.log(error);
       toast.error(error.message);
     }
   };
-
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, [token]);
 
   return (
     <div className="fixed flex justify-center items-center z-[1] w-full h-full bg-[#00000090]">
@@ -79,9 +80,10 @@ const Login = ({ showLogin, setShowLogin }) => {
           {state === "Sign Up" && (
             <div className="w-full relative my-8">
               <input
-                type="name"
+                type="text"
                 name="name"
                 placeholder=""
+                required
                 onChange={(e) => setName(e.target.value)}
                 value={name}
                 className="block w-60 sm:w-72 py-2 px-0 border-0 focus:outline-none bg-transparent border-b-2 border-gray-400  focus:border-blue-500 focus: peer"
@@ -102,6 +104,7 @@ const Login = ({ showLogin, setShowLogin }) => {
               type="email"
               name="email"
               placeholder=""
+              required
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               className="block w-60 sm:w-72 py-2 px-0 border-0 focus:outline-none bg-transparent border-b-2 border-gray-400  focus:border-blue-500 focus: peer"
@@ -121,6 +124,7 @@ const Login = ({ showLogin, setShowLogin }) => {
               type={show ? "text" : "password"}
               name="password"
               placeholder=""
+              required
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               className="block  w-60 sm:w-72 py-2 px-0 border-0 focus:outline-none border-b-2 bg-transparent border-gray-400  focus:border-blue-500 focus: peer"

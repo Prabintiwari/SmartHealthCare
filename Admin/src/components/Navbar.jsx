@@ -1,16 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
 import { assets_admin } from "../assets_admin/assets";
 import { AdminContext } from "../context/AdminContext";
+import { DoctorContext } from "../context/DoctorContext";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { aToken, setAToken } = useContext(AdminContext);
+  const { dToken, setDToken } = useContext(DoctorContext);
   const navigate = useNavigate();
+  
   const logout = () => {
     navigate("/");
-    aToken && setAToken("");
-    aToken && localStorage.removeItem("aToken");
+    if (aToken) {
+      setAToken("");
+      localStorage.removeItem("aToken");
+    }
+    if (dToken) {
+      setDToken("");
+      localStorage.removeItem("dToken");
+    }
   }
+  
   const [sticky, setSticky] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +43,7 @@ const Navbar = () => {
       localStorage.setItem("theme", "light");
     }
   }, [theme]);
+  
   return (
     <div className={`flex justify-between items-center py-3 px-10 border-b fixed top-0 left-0 right-0 z-50 dark:bg-slate-900  ${
           sticky
