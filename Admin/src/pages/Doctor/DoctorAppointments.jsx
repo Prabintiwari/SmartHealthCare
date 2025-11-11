@@ -12,6 +12,17 @@ const DoctorAppointments = () => {
     }
   }, [dToken])
 
+  // Auto-refresh appointments every 30 seconds
+  useEffect(() => {
+    if (dToken) {
+      const interval = setInterval(() => {
+        getAppointments()
+      }, 30000) // Refresh every 30 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [dToken])
+
   const calculateAge = (dob) => {
     if (!dob) return 'N/A'
     const today = new Date()
@@ -20,12 +31,22 @@ const DoctorAppointments = () => {
     return age
   }
 
+  const handleRefresh = () => {
+    getAppointments()
+  }
+
   return (
     <div className='m-5 max-h-[90vh] overflow-y-scroll'>
       <div className='bg-white dark:bg-slate-800 rounded-lg shadow-md'>
         <div className='p-5 border-b dark:border-gray-700 flex justify-between items-center'>
           <h2 className='text-2xl font-semibold text-gray-800 dark:text-white'>My Appointments</h2>
           <div className='flex items-center gap-3'>
+            <button 
+              onClick={handleRefresh}
+              className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2'
+            >
+              <span>🔄</span> Refresh
+            </button>
             <span className='bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-4 py-2 rounded-full font-semibold'>
               Total: {appointments.length}
             </span>

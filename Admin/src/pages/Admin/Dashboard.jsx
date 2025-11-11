@@ -12,11 +12,26 @@ const Dashboard = () => {
     }
   }, [aToken])
 
+  // Auto-refresh dashboard data every 30 seconds
+  useEffect(() => {
+    if (aToken) {
+      const interval = setInterval(() => {
+        getDashData()
+      }, 30000) // Refresh every 30 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [aToken])
+
   const calculateAge = (dob) => {
     const today = new Date()
     const birthDate = new Date(dob)
     let age = today.getFullYear() - birthDate.getFullYear()
     return age
+  }
+
+  const handleRefresh = () => {
+    getDashData()
   }
 
   return dashData && (
@@ -74,8 +89,14 @@ const Dashboard = () => {
 
       {/* Latest Appointments */}
       <div className='bg-white dark:bg-slate-800 rounded-lg shadow-md'>
-        <div className='p-5 border-b dark:border-gray-700'>
+        <div className='p-5 border-b dark:border-gray-700 flex justify-between items-center'>
           <h2 className='text-xl font-semibold text-gray-800 dark:text-white'>Latest Appointments</h2>
+          <button 
+            onClick={handleRefresh}
+            className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2'
+          >
+            <span>🔄</span> Refresh
+          </button>
         </div>
         <div className='p-5'>
           <div className='overflow-x-auto'>

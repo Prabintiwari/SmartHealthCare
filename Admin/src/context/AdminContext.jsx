@@ -77,6 +77,7 @@ const AdminContextProvider = (props) => {
       if (data.success) {
         toast.success(data.message);
         getAllAppointments();
+        getDashData(); // Also refresh dashboard data
       } else {
         toast.error(data.message);
       }

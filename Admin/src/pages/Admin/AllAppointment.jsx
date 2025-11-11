@@ -12,11 +12,26 @@ const AllAppointment = () => {
     }
   }, [aToken])
 
+  // Auto-refresh appointments every 30 seconds
+  useEffect(() => {
+    if (aToken) {
+      const interval = setInterval(() => {
+        getAllAppointments()
+      }, 30000) // Refresh every 30 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [aToken])
+
   const calculateAge = (dob) => {
     const today = new Date()
     const birthDate = new Date(dob)
     let age = today.getFullYear() - birthDate.getFullYear()
     return age
+  }
+
+  const handleRefresh = () => {
+    getAllAppointments()
   }
 
   return (
@@ -25,6 +40,12 @@ const AllAppointment = () => {
         <div className='p-5 border-b dark:border-gray-700 flex justify-between items-center'>
           <h2 className='text-2xl font-semibold text-gray-800 dark:text-white'>All Appointments</h2>
           <div className='flex items-center gap-3'>
+            <button 
+              onClick={handleRefresh}
+              className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2'
+            >
+              <span>🔄</span> Refresh
+            </button>
             <span className='bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-4 py-2 rounded-full font-semibold'>
               Total: {appointments.length}
             </span>
