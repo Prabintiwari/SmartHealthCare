@@ -1,18 +1,19 @@
 import React, { useContext, useEffect } from 'react'
-import { AdminContext } from '../../context/AdminContext'
+import { DoctorContext } from '../../context/DoctorContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faFilter, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faTimes, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 
-const AllAppointment = () => {
-  const { appointments, getAllAppointments, aToken, cancelAppointment } = useContext(AdminContext)
+const DoctorAppointments = () => {
+  const { appointments, getAppointments, dToken, acceptAppointment, declineAppointment, completeAppointment } = useContext(DoctorContext)
 
   useEffect(() => {
-    if (aToken) {
-      getAllAppointments()
+    if (dToken) {
+      getAppointments()
     }
-  }, [aToken])
+  }, [dToken])
 
   const calculateAge = (dob) => {
+    if (!dob) return 'N/A'
     const today = new Date()
     const birthDate = new Date(dob)
     let age = today.getFullYear() - birthDate.getFullYear()
@@ -23,7 +24,7 @@ const AllAppointment = () => {
     <div className='m-5 max-h-[90vh] overflow-y-scroll'>
       <div className='bg-white dark:bg-slate-800 rounded-lg shadow-md'>
         <div className='p-5 border-b dark:border-gray-700 flex justify-between items-center'>
-          <h2 className='text-2xl font-semibold text-gray-800 dark:text-white'>All Appointments</h2>
+          <h2 className='text-2xl font-semibold text-gray-800 dark:text-white'>My Appointments</h2>
           <div className='flex items-center gap-3'>
             <span className='bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-4 py-2 rounded-full font-semibold'>
               Total: {appointments.length}
@@ -38,8 +39,6 @@ const AllAppointment = () => {
                   <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>#</th>
                   <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>Patient</th>
                   <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>Age</th>
-                  <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>Doctor</th>
-                  <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>Speciality</th>
                   <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>Date & Time</th>
                   <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>Fees</th>
                   <th className='text-left py-4 px-3 text-gray-700 dark:text-gray-300 font-semibold'>Status</th>
@@ -62,18 +61,7 @@ const AllAppointment = () => {
                         </div>
                       </td>
                       <td className='py-4 px-3 text-gray-800 dark:text-white'>
-                        {item.userData.dob ? calculateAge(item.userData.dob) : 'N/A'}
-                      </td>
-                      <td className='py-4 px-3'>
-                        <div className='flex items-center gap-3'>
-                          <img src={item.docData.image} alt="" className='w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600' />
-                          <p className='font-semibold text-gray-800 dark:text-white'>{item.docData.name}</p>
-                        </div>
-                      </td>
-                      <td className='py-4 px-3'>
-                        <span className='bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-xs font-medium'>
-                          {item.docData.speciality}
-                        </span>
+                        {calculateAge(item.userData.dob)} years
                       </td>
                       <td className='py-4 px-3'>
                         <p className='font-medium text-gray-800 dark:text-white'>{item.slotDate}</p>
@@ -105,23 +93,47 @@ const AllAppointment = () => {
                         }
                       </td>
                       <td className='py-4 px-3'>
-                        {!item.cancelled && item.status !== 'Cancelled' ? (
-                          <button 
-                            onClick={() => cancelAppointment(item._id)}
-                            className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2'
-                          >
-                            <FontAwesomeIcon icon={faTimes} />
-                            Cancel
-                          </button>
-                        ) : (
-                          <span className='text-gray-500 dark:text-gray-400 font-medium'>Cancelled</span>
-                        )}
+                        <div className='flex gap-2'>
+                          {item.status === 'Pending' && (
+                            <>
+                              <button 
+                                onClick={() => acceptAppointment(item._id)}
+                                className='bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1'
+                                title="Accept Appointment"
+                              >
+                                <FontAwesomeIcon icon={faCheck} />
+                                Accept
+                              </button>
+                              <button 
+                                onClick={() => declineAppointment(item._id)}
+                                className='bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1'
+                                title="Decline Appointment"
+                              >
+                                <FontAwesomeIcon icon={faTimes} />
+                                Decline
+                              </button>
+                            </>
+                          )}
+                          {item.status === 'Accepted' && !item.isCompleted && (
+                            <button 
+                              onClick={() => completeAppointment(item._id)}
+                              className='bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1'
+                              title="Mark as Completed"
+                            >
+                              <FontAwesomeIcon icon={faCheckCircle} />
+                              Complete
+                            </button>
+                          )}
+                          {(item.status === 'Declined' || item.status === 'Completed' || item.status === 'Cancelled') && (
+                            <span className='text-gray-500 dark:text-gray-400 font-medium'>No action</span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="10" className='py-8 text-center text-gray-500 dark:text-gray-400'>
+                    <td colSpan="8" className='py-8 text-center text-gray-500 dark:text-gray-400'>
                       No appointments found
                     </td>
                   </tr>
@@ -135,4 +147,4 @@ const AllAppointment = () => {
   )
 }
 
-export default AllAppointment
+export default DoctorAppointments

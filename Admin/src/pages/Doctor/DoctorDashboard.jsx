@@ -1,23 +1,16 @@
 import React, { useContext, useEffect } from 'react'
-import { AdminContext } from '../../context/AdminContext'
+import { DoctorContext } from '../../context/DoctorContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserMd, faCalendarCheck, faUsers, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons'
+import { faMoneyBillWave, faCalendarCheck, faUsers, faClipboardList } from '@fortawesome/free-solid-svg-icons'
 
-const Dashboard = () => {
-  const { dashData, getDashData, aToken, cancelAppointment } = useContext(AdminContext)
+const DoctorDashboard = () => {
+  const { dashData, getDashData, dToken, acceptAppointment, declineAppointment, completeAppointment } = useContext(DoctorContext)
 
   useEffect(() => {
-    if (aToken) {
+    if (dToken) {
       getDashData()
     }
-  }, [aToken])
-
-  const calculateAge = (dob) => {
-    const today = new Date()
-    const birthDate = new Date(dob)
-    let age = today.getFullYear() - birthDate.getFullYear()
-    return age
-  }
+  }, [dToken])
 
   return dashData && (
     <div className='m-5'>
@@ -26,11 +19,11 @@ const Dashboard = () => {
         <div className='bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-gray-500 dark:text-gray-400 text-sm'>Total Doctors</p>
-              <p className='text-3xl font-bold text-gray-800 dark:text-white'>{dashData.doctors}</p>
+              <p className='text-gray-500 dark:text-gray-400 text-sm'>Earnings</p>
+              <p className='text-3xl font-bold text-gray-800 dark:text-white'>NPR {dashData.earnings}</p>
             </div>
             <div className='bg-blue-100 dark:bg-blue-900 p-4 rounded-full'>
-              <FontAwesomeIcon icon={faUserMd} className='text-blue-500 text-2xl' />
+              <FontAwesomeIcon icon={faMoneyBillWave} className='text-blue-500 text-2xl' />
             </div>
           </div>
         </div>
@@ -66,7 +59,7 @@ const Dashboard = () => {
               <p className='text-3xl font-bold text-gray-800 dark:text-white'>{dashData.latestAppointments.length}</p>
             </div>
             <div className='bg-yellow-100 dark:bg-yellow-900 p-4 rounded-full'>
-              <FontAwesomeIcon icon={faMoneyBillWave} className='text-yellow-500 text-2xl' />
+              <FontAwesomeIcon icon={faClipboardList} className='text-yellow-500 text-2xl' />
             </div>
           </div>
         </div>
@@ -83,8 +76,8 @@ const Dashboard = () => {
               <thead>
                 <tr className='border-b dark:border-gray-700'>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Patient</th>
-                  <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Doctor</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Date & Time</th>
+                  <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Fees</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Status</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Payment</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Actions</th>
@@ -103,14 +96,11 @@ const Dashboard = () => {
                       </div>
                     </td>
                     <td className='py-3 px-2'>
-                      <div className='flex items-center gap-2'>
-                        <img src={item.docData.image} alt="" className='w-10 h-10 rounded-full object-cover' />
-                        <p className='font-medium text-gray-800 dark:text-white'>{item.docData.name}</p>
-                      </div>
-                    </td>
-                    <td className='py-3 px-2'>
                       <p className='text-gray-800 dark:text-white'>{item.slotDate}</p>
                       <p className='text-sm text-gray-500 dark:text-gray-400'>{item.slotTime}</p>
+                    </td>
+                    <td className='py-3 px-2'>
+                      <p className='font-semibold text-green-600 dark:text-green-400'>NPR {item.amount}</p>
                     </td>
                     <td className='py-3 px-2'>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -130,15 +120,32 @@ const Dashboard = () => {
                       }
                     </td>
                     <td className='py-3 px-2'>
-                      {!item.cancelled && item.status !== 'Cancelled' && (
-                        <button 
-                          onClick={() => cancelAppointment(item._id)}
-                          className='bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm'
-                        >
-                          Cancel
-                        </button>
-                      )}
-                      {item.cancelled && <span className='text-gray-500 dark:text-gray-400'>Cancelled</span>}
+                      <div className='flex gap-2'>
+                        {item.status === 'Pending' && (
+                          <>
+                            <button 
+                              onClick={() => acceptAppointment(item._id)}
+                              className='bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs'
+                            >
+                              Accept
+                            </button>
+                            <button 
+                              onClick={() => declineAppointment(item._id)}
+                              className='bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs'
+                            >
+                              Decline
+                            </button>
+                          </>
+                        )}
+                        {item.status === 'Accepted' && !item.isCompleted && (
+                          <button 
+                            onClick={() => completeAppointment(item._id)}
+                            className='bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs'
+                          >
+                            Complete
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -151,4 +158,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default DoctorDashboard
