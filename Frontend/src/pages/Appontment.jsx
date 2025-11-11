@@ -26,6 +26,11 @@ const Appontment = ( {showLogin, setShowLogin}) => {
   const getAvailableSlots = async () => {
     setDocSlots([]);
 
+    // Check if docInfo exists before processing
+    if (!docInfo) {
+      return;
+    }
+
     // getting current date
     let today = new Date();
 
