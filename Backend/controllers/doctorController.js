@@ -61,7 +61,8 @@ const loginDoctor = async (req, res) => {
 const doctorAppointments = async (req, res) => {
   try {
     const { docId } = req.body;
-    const appointments = await appointmentModel.find({ docId });
+    const appointments = await appointmentModel.find({ docId })
+      .populate('userId', 'name email image dob phone address');
 
     res.json({ success: true, appointments });
   } catch (error) {
@@ -174,7 +175,8 @@ const doctorDashboard = async (req, res) => {
   try {
     const { docId } = req.body;
     
-    const appointments = await appointmentModel.find({ docId });
+    const appointments = await appointmentModel.find({ docId })
+      .populate('userId', 'name email image dob phone address');
     
     let earnings = 0;
     appointments.forEach((item) => {

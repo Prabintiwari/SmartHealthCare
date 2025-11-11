@@ -105,14 +105,17 @@ const DoctorDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {dashData.latestAppointments.map((item, index) => (
+                {dashData.latestAppointments.map((item, index) => {
+                  const patient = item.userId;
+                  
+                  return (
                   <tr key={index} className='border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700'>
                     <td className='py-3 px-2'>
                       <div className='flex items-center gap-2'>
-                        <img src={item.userData.image} alt="" className='w-10 h-10 rounded-full object-cover' />
+                        <img src={patient?.image} alt="" className='w-10 h-10 rounded-full object-cover' />
                         <div>
-                          <p className='font-medium text-gray-800 dark:text-white'>{item.userData.name}</p>
-                          <p className='text-sm text-gray-500 dark:text-gray-400'>{item.userData.email}</p>
+                          <p className='font-medium text-gray-800 dark:text-white'>{patient?.name}</p>
+                          <p className='text-sm text-gray-500 dark:text-gray-400'>{patient?.email}</p>
                         </div>
                       </div>
                     </td>
@@ -169,7 +172,7 @@ const DoctorDashboard = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

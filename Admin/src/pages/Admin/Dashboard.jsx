@@ -106,6 +106,7 @@ const Dashboard = () => {
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Patient</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Doctor</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Date & Time</th>
+                  <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Fees</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Status</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Payment</th>
                   <th className='text-left py-3 px-2 text-gray-600 dark:text-gray-300'>Actions</th>
@@ -136,6 +137,9 @@ const Dashboard = () => {
                     <td className='py-3 px-2'>
                       <p className='text-gray-800 dark:text-white'>{item.slotDate}</p>
                       <p className='text-sm text-gray-500 dark:text-gray-400'>{item.slotTime}</p>
+                    </td>
+                    <td className='py-3 px-2'>
+                      <p className='font-semibold text-green-600 dark:text-green-400'>NPR {item.amount}</p>
                     </td>
                     <td className='py-3 px-2'>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
